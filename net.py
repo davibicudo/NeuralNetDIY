@@ -1,5 +1,5 @@
 from typing import List
-from random import random
+import random
 
 from cost import CostFunction
 from layers import InputLayer, OutputLayer, HiddenLayer, Layer
@@ -19,8 +19,9 @@ class NeuralNet:
         # initialize weights and biases randomly
         for i in range(1, len(self.layers)):
             self.layers[i].weights = Matrix2D(
-                [Vector([random()] * self.layers[i].size) for _ in range(self.layers[i-1].size)])
-            self.layers[i].biases = Vector([random()] * self.layers[i].size)
+                [Vector([random.uniform(0, 1) for _ in range(self.layers[i].size)])
+                 for __ in range(self.layers[i-1].size)])
+            self.layers[i].biases = Vector([random.uniform(0, 1) for _ in range(self.layers[i].size)])
 
     def compute_single(self):
         for i in range(1, len(self.layers)):
