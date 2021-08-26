@@ -1,3 +1,5 @@
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/davibicudo/NeuralNetDIY/master)
+
 # About this repository
 
 This repository is a part of a project for completing the course "Mathematical Methods for Data Science and Machine Learning" at University of Bern. 
