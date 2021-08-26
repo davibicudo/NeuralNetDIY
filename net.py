@@ -1,24 +1,34 @@
 from typing import List
-from layers import InputLayer, OutputLayer, Layer
+from random import random
+
+from cost import CostFunction
+from layers import InputLayer, OutputLayer, HiddenLayer, Layer
+from linalg import Vector, Matrix2D
 
 
 class NeuralNet:
-    def __init__(self, layers: List['Layer'], learning_rate=1):
-        self.layers = layers
+    def __init__(self, input_layer: InputLayer, output_layer: OutputLayer,
+                 hidden_layers: List[HiddenLayer], cost_function: CostFunction, learning_rate=1):
         self.learning_rate = learning_rate
-        assert isinstance(layers[0], InputLayer)
-        assert isinstance(layers[-1], OutputLayer)
+        self.input_layer = input_layer
+        self.output_layer = output_layer
+        self.hidden_layers = hidden_layers
+        self.layers: List[Layer] = [input_layer] + hidden_layers + [output_layer]
+        self.cost_function = cost_function
 
-    def initialize_params(self):
-        pass
+        # initialize weights and biases randomly
+        for i in range(1, len(self.layers)):
+            self.layers[i].weights = Matrix2D(
+                [Vector([random()] * self.layers[i].size) for _ in range(self.layers[i-1].size)])
+            self.layers[i].biases = Vector([random()] * self.layers[i].size)
 
+    def compute_single(self):
+        for i in range(1, len(self.layers)):
+            self.layers[i].values = (self.layers[i].weights
+                                     .product(self.layers[i-1].values)
+                                     .sum(self.layers[i].biases))
+            self.layers[i].values = self.layers[i].activation.calc(self.layers[i].values)
 
-if __name__ == '__main__':
-    pass
-    # inputs = []
-    # outputs = []
-    # train_size = int(len(inputs)*.8)
-    # train_images, test_images = Vector(inputs[:train_size]), Vector(inputs[train_size:])
-    # train_labels, test_labels = Vector(outputs[:train_size]), Vector(outputs[train_size:])
-
+    def compute_cost(self, labels: Vector):
+        return self.cost_function.calc(self.output_layer.values, labels)
 

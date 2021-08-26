@@ -10,16 +10,17 @@ class DifferentDimensionError(Exception):
 class Matrix2D:
     def __init__(self, vectors: List['Vector']):
         self.columns = vectors
-        self.dimensions = (vectors[0].size, len(vectors))
-        if not all([v.size == self.dimensions[0] for v in vectors]):
-            raise DifferentDimensionError
+        if not isinstance(self, Vector):
+            self.dimensions = (vectors[0].size, len(vectors))
+            if not all([v.size == self.dimensions[0] for v in vectors]):
+                raise DifferentDimensionError
 
     def T(self):
         new_columns = []
-        for v in self.columns:
+        for i in range(self.dimensions[0]):
             new_vector = []
-            for i in range(len(self.columns)):
-                new_vector.append(v.vector[i])
+            for j in range(self.dimensions[1]):
+                new_vector.append(self.columns[j].vector[i])
             new_columns.append(Vector(new_vector))
         transposed = Matrix2D(new_columns)
         assert self.dimensions[0] == transposed.dimensions[1]
@@ -29,21 +30,44 @@ class Matrix2D:
     def product(self, other: 'Matrix2D'):
         return product(self, other)
 
+    def sum(self, other):
+        return sum_matrix(self, other)
+
 
 class Vector(Matrix2D):
     def __init__(self, list_: List[Number]):
         super().__init__([self])
         self.vector = list_
         self.size = len(list_)
+        self.dimensions = (self.size, 1)
 
     def dot(self, other):
         return dot(self, other)
+
+    def sum(self, other):
+        return sum_vector(self, other)
 
 
 def dot(v1: Vector, v2: Vector) -> Number:
     if v1.size != v2.size:
         raise DifferentDimensionError
     return sum([v1.vector[i]*v2.vector[i] for i in range(v1.size)])
+
+
+def sum_vector(v1: Vector, v2: Vector) -> Vector:
+    assert v1.dimensions == v2.dimensions
+    return Vector([v1.vector[i] + v2.vector[i] for i in range(v1.size)])
+
+
+def sum_matrix(m1: Matrix2D, m2: Matrix2D) -> Union[Matrix2D, Vector]:
+    assert m1.dimensions == m2.dimensions
+    new_columns = []
+    for c1, c2 in zip(m1.columns, m2.columns):
+        new_columns.append(sum_vector(c1, c2))
+    if len(new_columns) == 1:
+        return new_columns[0]
+    else:
+        return Matrix2D(new_columns)
 
 
 def product(m1: Matrix2D, m2: Matrix2D) -> Union[Number, Vector, Matrix2D]:

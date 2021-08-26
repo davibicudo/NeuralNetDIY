@@ -8,5 +8,3 @@ Course webpage: https://ilias.unibe.ch/goto_ilias3_unibe_crs_2152730.html
 
 Course material: https://github.com/KingaS03/Mathematics-for-Machine-Learning-and-Data-Science
 
-
-
