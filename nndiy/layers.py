@@ -20,22 +20,23 @@ class HiddenLayer(Layer):
 
 # supports only a single vector
 class InputLayer(Layer):
-    def __init__(self, input: Matrix2D, labels: Vector):
-        super().__init__(input.dimensions[1], Identity())
+    def __init__(self, input: Matrix2D, labels: Matrix2D):
+        super().__init__(input.dimensions[0], Identity())
         self.train_samples = input
         self.train_labels = labels
         self.sample_id = 0
-        self.values = input.columns[self.sample_id]  # set initial values to first column
+        self.values = input.columns[self.sample_id]  # set initial values to first row
+        self.activations = self.values
         self.weights = None
         self.biases = None
 
     def get_sample(self, sample_id: int = None):
         if sample_id is None:
             sample_id = self.sample_id
-        return self.train_samples.columns[sample_id], Vector([self.train_labels.vector[sample_id]])
+        return self.train_samples.columns[sample_id], self.train_labels.columns[sample_id]
 
 
 # supports only single output
 class OutputLayer(Layer):
-    def __init__(self, activation_function: ActivationFunction):
-        super().__init__(1, activation_function)
+    def __init__(self, size: int, activation_function: ActivationFunction):
+        super().__init__(size, activation_function)

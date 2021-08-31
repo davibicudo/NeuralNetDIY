@@ -28,11 +28,22 @@ class ReLU(ActivationFunction):
 
 
 class Sigmoid(ActivationFunction):
+    def exp(self, value):
+        # avoid numerical overflow by limiting exponent to 100 (absolute)
+        exp_100 = 2.6881171418161356e+43
+        exp_n100 = 3.720075976020836e-44
+        if abs(value) < 100:
+            return math.exp(value)
+        elif value > 0:
+            return exp_100
+        else:
+            return exp_n100
+
     def calc(self, inputs: Vector) -> Vector:
-        return Vector([1.0 / (1.0 + math.exp(-i)) for i in inputs.vector])
+        return Vector([1.0 / (1.0 + self.exp(-i)) for i in inputs.vector])
 
     def d_calc(self, inputs: Vector) -> Vector:
-        return Vector([math.exp(-i) / (1.0 + math.exp(-i))**2 for i in inputs.vector])
+        return Vector([self.exp(-i) / (1.0 + self.exp(-i))**2 for i in inputs.vector])
 
 
 class Softmax(ActivationFunction):

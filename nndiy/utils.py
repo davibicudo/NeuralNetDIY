@@ -20,4 +20,4 @@ def read_data(path, label_column=0, sep=',', skip_lines=1, nrows=-1):
             rows.append(Vector(row))
             counter += 1
 
-    return Matrix2D(rows).T(), Vector(labels)
+    return Matrix2D(rows), Vector(labels)
