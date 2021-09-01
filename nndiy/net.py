@@ -1,6 +1,7 @@
 from typing import List
 import random
 import time
+import math
 
 from nndiy.cost import CostFunction
 from nndiy.layers import InputLayer, OutputLayer, HiddenLayer, Layer
@@ -19,9 +20,7 @@ class NeuralNet:
 
         # initialize weights and biases randomly
         for i in range(1, len(self.layers)):
-            self.layers[i].weights = Matrix2D(
-                [Vector([random.uniform(0, 1) for _ in range(self.layers[i].size)])
-                 for __ in range(self.layers[i-1].size)])
+            self.layers[i].weights = normalized_xavier_intialization(self.layers[i-1].size, self.layers[i].size)
             self.layers[i].biases = Vector([0]*self.layers[i].size)
 
     def predict(self, data):
@@ -110,6 +109,10 @@ class NeuralNet:
             epoch += 1
 
 
-
-
+def normalized_xavier_intialization(size_input, size_output):
+    # calculate the range for the weights
+    lower = -(math.sqrt(6.0) / math.sqrt(size_input + size_output))
+    upper = (math.sqrt(6.0) / math.sqrt(size_input + size_output))
+    # generate random weights
+    return Matrix2D([Vector([random.uniform(lower, upper) for _ in range(size_output)]) for __ in range(size_input)])
 
